@@ -1,25 +1,16 @@
 # Notes
 
-An open source private notebook. Store all of your notes on a private mongoDB.
+A free and open source private notebook. Store all of your notes on your private mongoDB.
 
-## Todo
+## Set up
 
-- why arent the inputs changing on get response?
-- On save click text hould change to saving...
-- Add get notes axios / api save to redux
-- Add get note axios / api
+1. Clone the repo with `git clone https://github.com/andyashall/personote.git`
+2. Change directory to the repo `cd personote`
+3. Install the dependencies with `npm i` 
+4. Add your MongoDB url to the `mongo.config.js` file
+5. Start the app with `npm start`
 
+## Build for Production
 
-- Save search to redux
-- Search should go to new search page /search/{searchedText} on enter otherwise filter notes
-- Add a homepage (show reminders / previous notes / tags search angel.co style)
-- Styles
-- Set up DB
-- On change post update to db 
-- Add a search 
-- Use tags instead of folders
-- Have a tag search function like angel.co 
-
-## Done
-
-- Finish accounts (redux / api)
+1. Add a `favicon.png` 
+2. Run the command `npm run build`

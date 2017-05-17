@@ -1,7 +1,3 @@
 node_modules
-.DS_Store
-*.log
-mongo.config.js
-node.exe
 dist
 favicon.png
