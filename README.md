@@ -14,3 +14,8 @@ A free and open source private notebook. Store all of your notes on your private
 
 1. Add a `favicon.png` 
 2. Run the command `npm run build`
+
+# Todo
+
+- Mobile styles
+- Settings page
