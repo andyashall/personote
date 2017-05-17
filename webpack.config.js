@@ -17,7 +17,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'app/index.tpl.html',
+      template: 'app/index.tpl.ejs',
       inject: 'body',
       filename: 'index.html'
     }),
