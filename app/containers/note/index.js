@@ -1,12 +1,37 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import axios from 'axios'
 import ContentEditable from 'react-contenteditable'
 import store from '../../store'
 const state = store.getState()
 import NoteButton from '../../components/noteButton'
+import ControlButton from '../../components/controlButton'
 
-import { saveNote, updateNote, removeNote } from '../../actions'
+import { saveNote, addNote, updateNotes } from '../../actions'
+
+let resp = {
+	inner: {
+		width: "700px",
+		position: "relative",
+		left: "50%",
+		transform: "translateX(-50%)",
+		padding: "2rem 0",
+		boxSizing: "border-box"
+	}
+}
+
+if (window.innerWidth <= 700) {
+	resp.inner = {
+		mergin: "0 20px",
+		minWidth: "300px",
+		position: "relative",
+		left: "50%",
+		transform: "translateX(-50%)",
+		padding: "2rem 20px",
+		boxSizing: "border-box"		
+	}
+}
 
 const style = {
 	note: {
@@ -20,14 +45,6 @@ const style = {
 		minHeight: "calc(100vh - 50px)",
 		backgroundColor: "#fff"
 	},
-	inner: {
-		width: "700px",
-		position: "relative",
-		left: "50%",
-		transform: "translateX(-50%)",
-		padding: "2rem 0",
-		boxSizing: "border-box"
-	},
 	title : {
 		border: "none",
 		borderBottom: "1px solid rgba(0,0,0,.08)",
@@ -36,7 +53,8 @@ const style = {
 		fontSize: "2rem",
 		marginTop: "5px",
 		padding: "8px 0",
-		outline: "none"
+		outline: "none",
+		color: "#1c1c1c"
 	},
 	textArea: {
 		width: "100%",
@@ -48,7 +66,8 @@ const style = {
 		fontFamily: "helvetica",
 		fontSize: "1rem",
 		lineHeight: "1.4",
-		outline: "none"
+		outline: "none",
+		color: "#1c1c1c"
 	},
 	controls: {
 		display: "flex"
@@ -62,8 +81,9 @@ const style = {
 		width: "50%",
 		textAlign: "right"
 	},
-	save: {
-		marginBottom: "1rem"
+	statusCont: {
+		padding: "3px 0",
+		display: "inline-block"
 	},
 	statusSaved: {
 		display: "inline-block",
@@ -89,6 +109,16 @@ const style = {
 	icon: {
 		fontSize: "1rem",
 		verticalAlign: "middle"
+	},
+	noteControls: {
+		padding: "5px",
+		borderBottom: "1px solid rgba(0,0,0,.08)",
+		borderLeft: "1px solid rgba(0,0,0,.08)",
+		borderRight: "1px solid rgba(0,0,0,.08)",
+		backgroundColor: "#f9f9f9"
+	},
+	noteControlsHide: {
+		display: "none"
 	}
 }
 
@@ -103,13 +133,14 @@ class Note extends React.Component {
 				title: store.getState().note.title,
 				content: store.getState().note.content,
 				nid: store.getState().note._id,
+				archived: store.getState().note.archived,
 				saved: true
 			})
 		})
 		this.titleChange = this.titleChange.bind(this)
 		this.bodyChange = this.bodyChange.bind(this)
 	}
-	componentDidMount() {
+	componentWillMount() {
 		if (this.props.note._id !== this.props.location.pathname.replace("/n/", "")) {
     		this.getNote(this.props.location.pathname.replace("/n/", ""))
     	}else if (Object.keys(this.props.note).length !== 0) {
@@ -117,9 +148,9 @@ class Note extends React.Component {
     	}
 	}
 	getNote(path) {
-		let user = {}
+		let user = ""
     	if (Object.keys(this.props.user).length !== 0) {
-    	  user = store.getState().user.userId
+    	  user = this.props.user.userId
     	} else if (cookie.load('user')) {
     	  user = cookie.load('user').userId
     	} 
@@ -142,10 +173,8 @@ class Note extends React.Component {
 	}
 	titleChange(e) {
 		this.setState({title: e.target.value, saved: false})
-		// this.start()
 	}
 	bodyChange(e) {
-		let timer
 		let body = document.getElementById("body")
 		this.setState({content: e.target.value, saved: false})
 	}
@@ -161,7 +190,7 @@ class Note extends React.Component {
 				this.save()
 				console.log("saving...")
 			}
-		}, 3000)
+		}, 1000)
 	}
 	keyDown() {
 		clearTimeout(timer)
@@ -189,7 +218,16 @@ class Note extends React.Component {
 					preview: prev,
 					_id: this.state.nid
 				}
-				store.dispatch(updateNote(store.getState().notes, newNote))
+				let current = store.getState().notes
+				Object.keys(current).forEach((i) => {
+					if (current[i]._id == newNote._id) {
+						current[i].title = newNote.title
+						current[i].content = newNote.content
+						current[i].preview = newNote.preview
+						current[i].updated = new Date()
+						store.dispatch(updateNotes(current))
+					}
+				})
 			})
 			.catch((err) => {
 				console.log(err)
@@ -197,9 +235,9 @@ class Note extends React.Component {
 		}
 	}
 	getNotes() {
-		let user = null
+		let user = ""
     	if (Object.keys(this.props.user).length !== 0) {
-    	  user = store.getState().user.userId
+    	  user = this.props.user.userIdupdateNotes
     	} else if (cookie.load('user')) {
     	  user = cookie.load('user').userId
     	} 
@@ -218,12 +256,34 @@ class Note extends React.Component {
 	archiveNote() {
 		let data = {
 			nid: this.props.note._id,
-			uid: store.getState().user.userId
+			uid: this.props.user.userId
 		}
 		axios.post('/api/archivenote', data)
 		.then((res) => {
 			if (res.status === 200) {
-				store.dispatch(removeNote(store.getState().notes, this.props.note))
+					let current = store.getState().notes,
+						lim = Object.keys(current).length
+					Object.keys(current).forEach((i) => {
+						if (current[i]._id === this.props.note._id) {
+							current.splice(i,1)
+							store.dispatch(updateNotes(current))
+						}
+					})	
+			}
+		})
+		.catch((err) => {
+			console.log(err)
+		})
+	}
+	unarchiveNote() {
+		let data = {
+			nid: this.props.note._id,
+			uid: this.props.user.userId
+		}
+		axios.post('/api/unarchivenote', data)
+		.then((res) => {
+			if (res.status === 200) {
+				store.dispatch(addNote(store.getState().notes, this.props.note))
 			}
 		})
 		.catch((err) => {
@@ -234,12 +294,20 @@ class Note extends React.Component {
 		if (confirm("Are you sure? This can't be undone!")) {
 			let data = {
 				nid: this.props.note._id,
-				uid: store.getState().user.userId
+				uid: this.props.user.userId
 			}
 			axios.post('/api/deletenote', data)
 			.then((res) => {
 				if (res.status === 200) {
-					store.dispatch(removeNote(store.getState().notes, this.props.note))
+					let current = store.getState().notes,
+						lim = Object.keys(current).length
+					Object.keys(current).forEach((i) => {
+						if (current[i]._id === this.props.note._id) {
+							current.splice(i,1)
+							store.dispatch(updateNotes(current))
+							browserHistory.push("/")
+						}
+					})	
 				}
 			})
 			.catch((err) => {
@@ -249,9 +317,51 @@ class Note extends React.Component {
 			return
 		}
 	}
+	doot(e) {
+		console.log("doot")
+	}
+	insertTodoAtCursor() { 
+	   let sel = window.getSelection()
+	   let range = sel.getRangeAt(0) 
+	   range.deleteContents() 
+	   let check = document.createElement("INPUT")
+	   check.type = 'checkbox'
+	   range.insertNode(check)
+	   sel.removeAllRanges()
+	   sel.addRange(range)       
+	}
+	insertListAtCursor() { 
+	   let sel = window.getSelection()
+	   let range = sel.getRangeAt(0) 
+	   range.deleteContents() 
+	   let ul = document.createElement("UL")
+	   let list = document.createElement("LI")
+	   ul.append(list)
+	   range.insertNode(ul)
+	   sel.removeAllRanges()
+	   sel.addRange(range)       
+	}
+	insertCodeAtCursor() { 
+	   let sel = window.getSelection()
+	   let range = sel.getRangeAt(0) 
+	   range.deleteContents() 
+	   let pre = document.createElement("PRE")
+	   let code = document.createElement("CODE")
+	   pre.style.backgroundColor = '#f9f9f9'
+	   pre.style.padding = '15px 20px'
+	   pre.style.fontSize = '.8rem'
+	   pre.style.color = '#555'
+	   pre.style.border = '1px solid rgba(0, 0, 0, 0.08)'
+	   code.append("text")
+	   pre.append(code)
+	   range.insertNode(pre)
+	   sel.removeAllRanges()
+	   sel.addRange(range)       
+	}
 	render() {
 		let status = null,
-			icon = null
+			icon = null,
+			archiveButton = null
 		if (this.state.saving) {
  			status = <div style={style.statusSaved}>Saving...</div>
  			icon = <div style={style.iconSaved}><i style={style.icon} className="material-icons">save</i></div>
@@ -262,22 +372,33 @@ class Note extends React.Component {
 			status = <div style={style.statusNot}>Changes not saved</div>
 			icon = <div style={style.iconNot}><i style={style.icon} className="material-icons">close</i></div>
 		}
+		if (this.state.archived) {
+			archiveButton = <NoteButton icon="unarchive" text="Unarchive note" onClick={this.unarchiveNote.bind(this)} />
+		} else {
+			archiveButton = <NoteButton icon="archive" text="Archive note" onClick={this.archiveNote.bind(this)} />
+		}
 		return (
 			<div style={style.note}>
-				<div style={style.inner}>
+				<div style={resp.inner}>
 					<div style={style.controls}>
 						<div style={style.contLeft}>
-							<NoteButton icon="archive" text="Archive note" onClick={this.archiveNote.bind(this)} />
+							{archiveButton}
 							<NoteButton icon="delete" text="Delete note" onClick={this.deleteNote.bind(this)} />
 						</div>
 						<div style={style.contRight}>
-							{status}
-							{icon}
+							<div style={style.statusCont}>
+								{status}
+								{icon}
+							</div>
 						</div>
 					</div>	
 					<input style={style.title} onChange={this.titleChange} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} value={this.state.title} />
+					<div style={this.props.editor ? style.noteControls : style.noteControlsHide}>
+						<ControlButton onClick={this.insertTodoAtCursor.bind(this)} icon="check_box" text="Todo" />
+						<ControlButton onClick={this.insertListAtCursor.bind(this)} icon="list" text="List" />
+						<ControlButton onClick={this.insertCodeAtCursor.bind(this)} icon="code" text="Code" />
+					</div>
 					<ContentEditable id="body" onChange={this.bodyChange} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} html={this.state.content} style={style.textArea} />
-				{/*	<TinyMCE content={this.state.content} onChange={this.bodyChange} config={{plugins: "autoresize autolink link image lists textcolor colorpicker", toolbar: "", themes: "modern", skin: ''}} /> */}
 				</div>
 			</div>
 		)
@@ -288,7 +409,8 @@ const mapStateToProps = (state) => {
   return {
     nav: state.nav,
     note: state.note,
-    user: state.user
+    user: state.user,
+    editor: state.editor
   }
 }
 

@@ -6,9 +6,6 @@ const state = store.getState()
 import {searchNotes} from '../../actions'
 
 const style = {
-	cont: {
-		// padding: "15px 10px"
-	},
 	search: {
 		padding: "18px 10px",
 		color: "#3c3c3c",
@@ -16,8 +13,6 @@ const style = {
 		width: "100%",
 		border: "none",
 		outline: "none"
-		// border: "1px solid #dedede",
-		// borderRadius: "3px"
 	},
 	searchHov: {
 		margin: "15px 10px",
@@ -42,7 +37,7 @@ class Search extends React.Component {
 	}
 	render() {
 		return (
-			<div style={style.cont}>
+			<div>
 				<input onChange={this.search.bind(this)} placeholder="Search notes..." style={style.search} />
 			</div>
 		)

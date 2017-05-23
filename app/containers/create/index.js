@@ -5,7 +5,7 @@ import axios from 'axios'
 import store from '../../store'
 const state = store.getState()
 
-import { addNote, updateNote } from '../../actions'
+import { addNote, updateNotes } from '../../actions'
 
 const style = {
 	note: {
@@ -34,7 +34,8 @@ const style = {
 		boxSizing: "border-box",
 		width: "100%",
 		fontSize: "2rem",
-		padding: "8px 0"
+		padding: "8px 0",
+		outline: "none"
 	},
 	textArea: {
 		width: "100%",
@@ -108,7 +109,7 @@ class Create extends React.Component {
 				this.save()
 				console.log("saving...")
 			}
-		}, 5000)
+		}, 1000)
 	}
 	keyDown() {
 		clearTimeout(timer)
@@ -165,7 +166,16 @@ class Create extends React.Component {
 					preview: prev,
 					_id: this.state.nid
 				}
-				store.dispatch(updateNote(store.getState().notes, newNote))
+				let current = store.getState().notes
+				Object.keys(current).forEach((i) => {
+					if (current[i]._id == newNote._id) {
+						current[i].title = newNote.title
+						current[i].content = newNote.content
+						current[i].preview = newNote.preview
+						current[i].updated = new Date()
+						store.dispatch(updateNotes(current))
+					}
+				})
 			})
 			.catch((err) => {
 				console.log(err)

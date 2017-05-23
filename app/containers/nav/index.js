@@ -13,8 +13,6 @@ import { getNotes, moreNotes, updatePost } from '../../actions'
 
 const style = {
 	nav: {
-		// marginTop: "50px",
-		// height: "calc(100vh - 50px)",
 		position: "fixed",
 		height: "100vh",
 		minWidth: "300px",
@@ -39,12 +37,9 @@ const style = {
 class Nav extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {nav: props.nav, notes: props.notes}
+		this.state = {doot: "doot"}
 		store.subscribe(() => {
-			this.setState({
-				notes: store.getState().notes,
-				search: store.getState().search
-			})
+			this.setState({notes: this.props.notes, moreAvailable: false})
 		})
 	}
 	componentDidMount() {
@@ -53,7 +48,7 @@ class Nav extends React.Component {
 	getNotes() {
 		let user = null
     	if (Object.keys(this.props.user).length !== 0) {
-    	  user = store.getState().user.userId
+    	  user = this.props.user.userId
     	} else if (cookie.load('user')) {
     	  user = cookie.load('user').userId
     	} 
@@ -64,18 +59,13 @@ class Nav extends React.Component {
 		})
 		.then((res) => {
 			store.dispatch(getNotes(res.data))
+			if (Object.keys(res.data).length === 10) {
+				this.setState({moreAvailable: true})
+			}
 		})
 		.catch((err) => {
 			console.log(err)
 		})
-	}
-	hoverIn(e) {
-		let sidebar = document.getElementById("sidebar")
-		sidebar.style.overflow = "auto"
-	}
-	hoverOut(e) {
-		let sidebar = document.getElementById("sidebar")
-		sidebar.style.overflow = "hidden"
 	}
 	toggleNav() {
 		if (store.getState().nav) {
@@ -85,20 +75,11 @@ class Nav extends React.Component {
 		}
 	}
 	render() {
-		let notes = null
-		if (!this.props.notes) {
-			notes = <NavNote id="1" title="Feedback changes" date="1 hour ago" body="Hello this is a test with more text as i should probably set a max line clamp to around 3." />
-		}
-		if (this.props.notes.data === "Not logged in") {
-			notes = <NavNote id="1" title="Feedback changes" date="1 hour ago" body="Hello this is a test with more text as i should probably set a max line clamp to around 3." />
-		}
-		if (Object.keys(this.props.notes).length === 0) {
-			notes = <div></div>
-		}
-		if (Object.keys(this.props.notes).length >= 1 && this.props.notes.data !== "Not logged in") {
-			notes = <span>{this.props.notes.data.sort((a,b) => {return new Date(b.updated) - new Date(a.updated)}).filter((note) => {
+		let notes = <NavNote id="1" key="1" title="Loading notes..." date={new Date()} body="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
+		if (Object.keys(this.props.notes).length >= 1 && this.props.notes !== "Not logged in") {
+			notes = <span>{this.props.notes.sort((a,b) => {return new Date(b.updated) - new Date(a.updated)}).filter((note) => {
 				let combined = note.title.concat(note.content).toLowerCase()
-				return combined.indexOf(this.state.search) !== -1
+				return combined.indexOf(this.props.search) !== -1
 			}).map(note => {
 				return <NavNote id={note._id} key={note._id} title={note.title} date={note.updated} body={note.preview} />
 			})}</span>
@@ -106,11 +87,9 @@ class Nav extends React.Component {
 		return (
 			<div>
 			<div style={this.props.nav ? style.navPlace : style.hide}></div>
-			<div id="sidebar" onMouseEnter={this.hoverIn.bind(this)} onMouseLeave={this.hoverOut.bind(this)} style={this.props.nav ? style.nav : style.hide}>
+			<div style={this.props.nav ? style.nav : style.hide}>
 				<div style={style.top}>
 					<Search />
-				{/*	<NavTop icon="home" link="/" text="Home" />
-					<NavTop icon="settings" link="/settings" text="Settings" /> */}
 				</div>
 				{notes}
 			</div>

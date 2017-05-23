@@ -56,6 +56,11 @@ class NavNote extends React.Component {
 		super(props)
 		this.state = {hov: false}
 	}
+	// componentDidMount() {
+	// 	if (this.props.id === location.pathname.replace("/n/","")) {
+	// 		this.setState({active: true})
+	// 	}
+	// }
 	hoverIn(e) {
 		this.setState({hov: true})
 	}
@@ -72,7 +77,7 @@ class NavNote extends React.Component {
 		if (e.key === "Enter") {this.getNote.bind(this)}
 	}
 	getNote() {
-		let note = this.props.notes.data.find(this.matches.bind(this))
+		let note = this.props.notes.find(this.matches.bind(this))
 		store.dispatch(saveNote(note))
 	}
 	render() {

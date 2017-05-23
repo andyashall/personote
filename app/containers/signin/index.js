@@ -23,7 +23,6 @@ const style = {
 		backgroundColor: "#fff",
 		padding: "1rem 2rem",
 		borderRadius: "3px",
-		// border: "1px solid rgba(0,0,0,.08)",
 		width: "300px"
 	},
 	input: {
@@ -84,6 +83,7 @@ class Signin extends React.Component {
 				store.dispatch(signIn(res.data))
 				cookie.save('user', res.data)
 				browserHistory.push("/")
+				location.reload()
 			})
 			.catch((err) => {
 				
@@ -106,9 +106,14 @@ class Signin extends React.Component {
 		    }
 			axios.post("/api/signup", data)
 			.then((res) => {
+				if (res.data === "Incorrect password") {
+					console.log("Incorrect password")
+					return
+				}
 				store.dispatch(signIn(res.data))
 				cookie.save('user', res.data)
 				browserHistory.push("/")
+				location.reload()
 			})
 			.catch((err) => {
 				

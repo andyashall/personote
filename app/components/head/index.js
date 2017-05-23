@@ -1,9 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {Link} from 'react-router'
+import {Link, browserHistory} from 'react-router'
 import cookie from 'react-cookie'
 import axios from 'axios'
-import {showNav, hideNav, signIn} from '../../actions'
+import {showNav, hideNav, signIn, signOut} from '../../actions'
 import store from '../../store'
 const state = store.getState()
 import HeadButton from '../headButton'
@@ -15,7 +15,6 @@ const style = {
 		position: "absolute",
 		height: "50px",
 		backgroundColor: "#fff",
-		// borderBottom: "1px solid rgba(0,0,0,.08)",
 		color: "#777",
 		zIndex: 100
 	},
@@ -30,13 +29,6 @@ const style = {
 		top: "50%",
 		transform: "translateY(-50%)",
 		right: "20px"
-	},
-	center: {
-		position: "absolute",
-		top: "50%",
-		transform: "translate(-50%, -50%)",
-		left: "50%",
-		color: "#999"
 	},
 	icon: {
 		verticalAlign: "middle",
@@ -91,42 +83,47 @@ const style = {
 		border: "none",
 		borderRadius: "3px",
 		padding: "8px 15px",
-		cursor: "pointer"
+		cursor: "pointer",
+		outline: "none"
 	},
 	newNoteHov: {
 		backgroundColor: "transparent",
-		color: "#777",
+		color: "#3c3c3c",
 		border: "none",
 		borderRadius: "3px",
 		padding: "8px 15px",
 		cursor: "pointer",
 		backgroundColor: "#f1f1f1"
+	},
+	options: {
+		marginLeft: "20px",
+		border: "none",
+		borderRadius: "3px",
+		padding: "8px 15px",
+		cursor: "pointer",
+		fontSize: ".8rem",
+		backgroundColor: "transparent",
+		color: "#999",
+		display: "inline-block"
+	},
+	optionsHide: {
+		display: "none"
 	}
 }
 
 class Head extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {nav: props.nav, user: props.user}
+		this.state = {foo: "bar"}
 		let userCookie = cookie.load('user')
 		if (Object.keys(props.user).length === 0) {
-			if (!userCookie) {
-				this.state = {user: false}
-			} else {
-				this.state = {user: userCookie}
+			if (userCookie) {
 				store.dispatch(signIn(userCookie))
 			}
-		} else {
-			this.state = {user: false}
 		}
-		store.subscribe(() => {
-			this.setState({
-				user: store.getState().user
-			})
-		})
 	}
 	toggleNav() {
-		if (store.getState().nav) {
+		if (this.props.nav) {
 			store.dispatch(hideNav())
 		} else {
 			store.dispatch(showNav())
@@ -135,30 +132,41 @@ class Head extends React.Component {
 	getFirstChar(e) {
 		return e.charAt(0)
 	}
+	signOut() {
+		cookie.remove('user')
+		browserHistory.push("/")
+		location.reload()
+	}
 	render() {
-		let account = undefined
-		if (Object.keys(this.state.user).length >= 1) {
+		let account = undefined,
+			buttons = undefined
+		if (Object.keys(this.props.user).length >= 1) {
 			account =	<span>
 							<Link to="/new"><button onMouseEnter={() => {this.setState({newNoteHov: true})}} onMouseLeave={() => {this.setState({newNoteHov: false})}} style={this.state.newNoteHov ? style.newNoteHov : style.newNote}>New note +</button></Link>
-							<div style={style.account}>{this.getFirstChar(this.state.user.email)}</div>
+							<div onClick={() => {let val = false; if (this.state.showOptions) {val = false} else {val = true} this.setState({showOptions: val})}} style={style.account}>{this.getFirstChar(this.props.user.email)}</div>
+							<div onClick={this.signOut.bind(this)} style={this.state.showOptions ? style.options : style.optionsHide}>Sign out</div>
 						</span>
 		} 
-		if (Object.keys(this.state.user).length < 1) {
+		if (Object.keys(this.props.user).length < 1) {
 			account = <Link to="/signin"><button onMouseEnter={() => {this.setState({signInHov: true})}} onMouseLeave={() => {this.setState({signInHov: false})}} style={this.state.signInHov ? style.signInHov : style.signIn}>Sign up / Sign in</button></Link>
 		}
-		if (!this.state.user) {
+		if (!this.props.user) {
 			account = <Link to="/signin"><button onMouseEnter={() => {this.setState({signInHov: true})}} onMouseLeave={() => {this.setState({signInHov: false})}} style={this.state.signInHov ? style.signInHov : style.signIn}>Sign up / Sign in</button></Link>
+		}
+		if (window.innerWidth <= 700) {
+			// Change this to best practice or use css?
+		} else {
+			buttons = <span> 
+					<HeadButton link="/" text="Home" />
+					<HeadButton link="/archive" text="Archive" />
+					<HeadButton link="/settings" text="Settings" />
+					</span>
 		}
 		return (
 			<div style={style.head}>
 				<div style={style.left}>
 					<i onMouseEnter={() => {this.setState({iconHov: true})}} onMouseLeave={() => {this.setState({iconHov: false})}} onClick={this.toggleNav.bind(this)} style={this.state.iconHov ? style.iconHov : style.icon} className="material-icons">menu</i>
-					<HeadButton link="/" text="Home" />
-					<HeadButton link="/archive" text="Archive" />
-					<HeadButton link="/settings" text="Settings" />
-				</div>
-				<div style={style.center}>
-				{/*	<i className="material-icons">landscape</i> */}
+					{buttons}
 				</div>
 				<div style={style.right}>
 					{account}

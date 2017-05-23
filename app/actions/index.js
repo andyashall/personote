@@ -10,9 +10,28 @@ export const hideNav = () => {
   }
 }
 
+export const advancedOn = () => {
+  return {
+    type: 'SHOW_ADVANCED',
+  }
+}
+
+export const advancedOff = () => {
+  return {
+    type: 'HIDE_ADVANCED',
+  }
+}
+
 export const getNotes = (data) => {
   return {
     type: 'GET_NOTES',
+    data
+  }
+}
+
+export const updateNotes = (data) => {
+  return {
+    type: 'UPDATE_NOTES',
     data
   }
 }
@@ -44,14 +63,6 @@ export const addNote = (current, data) => {
   }
 }
 
-export const removeNote = (current, data) => {
-  return {
-    type: 'REMOVE_NOTE',
-    current: current,
-    data: data
-  }
-}
-
 export const saveNote = (data) => {
   return {
     type: 'SAVE_NOTE',
@@ -66,10 +77,9 @@ export const signIn = (data) => {
 	}
 }
 
-export const signOut = (data) => {
+export const signOut = () => {
   return {
-  type: 'REMOVE_USER',
-  data
+  type: 'REMOVE_USER'
   }
 }
 
