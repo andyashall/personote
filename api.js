@@ -174,6 +174,31 @@ module.exports = (app, url, MongoClient, assert) => {
         })
     })
 
+    app.post('/api/unarchivenote', (req, res) => {
+        console.log(req.body)
+        let nid = req.body.nid,
+            userId = req.body.uid
+        if (!userId) {
+            res.send("Not logged in")
+            return
+        }
+        MongoClient.connect(url)
+        .then((db,err) => {
+            assert.equal(null,err)
+            let Notes = db.collection('notes')
+            Notes.updateOne({$and: [{_id: nid}, {user: userId}]}, {$set: {
+                archived: false
+            }}, (err, result) => {
+                if (err) {
+                    res.send(err)
+                }
+                if (result) {
+                    res.send(result)
+                }
+            })
+        })
+    })
+
     app.post('/api/deletenote', (req, res) => {
         console.log(req.body)
         let nid = req.body.nid,
@@ -226,6 +251,54 @@ module.exports = (app, url, MongoClient, assert) => {
     			}
     		})
     	})
+    })
+
+    app.post('/api/changepassword', (req, res) => {
+        let userId = req.body.uid,
+            pass = req.body.pass,
+            newPass = req.body.newPass,
+            conf = req.body.conf
+        if (!userId) {
+            res.send("Not logged in")
+            return
+        }
+        if (newPass !== conf) {
+            res.send("Passwords don't match")
+            return
+        }
+        MongoClient.connect(url)
+        .then((db,err) => {
+            let Users = db.collection('users')
+            Users.findOne({_id: userId}, (err, user) => {
+                if (err) {
+                    res.send("user not found")
+                }
+                if (user) {
+                    let hash = user.password
+                    console.log(hash)
+                    bcrypt.compare(pass, hash, (err, result) => {
+                        if (result) {
+                            bcrypt.hash(newPass, saltRounds).then((hash) => {
+                                assert.equal(null,err)
+                                let Users = db.collection('users')
+                                Users.updateOne({_id: userId}, {
+                                    password: hash
+                                }, (err, result) => {
+                                    if (err) {
+                                        res.send(err)
+                                    }
+                                    if (result) {
+                                        res.send("Password Changed")
+                                    }
+                                })
+                            })
+                        } else {
+                            res.send("Incorrect password")
+                        }
+                    })
+                }
+            })
+        })
     })
 
     app.post('/api/signup', (req, res) => {

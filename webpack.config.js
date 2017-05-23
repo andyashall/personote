@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+var path = require('path')
+var webpack = require('webpack')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   devtool: 'eval-source-map',
@@ -44,4 +44,4 @@ module.exports = {
       loader: 'style-loader!css-loader?modules&localIdentName=[name]---[local]---[hash:base64:5]'
     }]
   }
-};
+}
