@@ -1,8 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {browserHistory} from 'react-router-dom'
 import axios from 'axios'
 import ContentEditable from 'react-contenteditable'
+import cookie from 'react-cookie'
 import store from '../../store'
 const state = store.getState()
 import NoteButton from '../../components/noteButton'
@@ -51,7 +52,7 @@ const style = {
 		boxSizing: "border-box",
 		width: "100%",
 		fontSize: "2rem",
-		marginTop: "5px",
+		marginTop: "2px",
 		padding: "8px 0",
 		outline: "none",
 		color: "#1c1c1c"
@@ -70,37 +71,44 @@ const style = {
 		color: "#1c1c1c"
 	},
 	controls: {
-		display: "flex"
+		display: "flex",
+		top: 0,
+		padding: "3px 0",
+		position: "sticky",
+		backgroundColor: "#fff",
+		whiteSpace: "nowrap",
+		marginLeft: "-5px"
 	},
 	contLeft: {
 		width: "50%",
 		color: "#777",
-		marginLeft: "-5px"
+		marginLeft: "-2px"
 	},
 	contRight: {
 		width: "50%",
 		textAlign: "right"
 	},
 	statusCont: {
-		padding: "3px 0",
+		padding: "3px",
 		display: "inline-block"
 	},
 	statusSaved: {
 		display: "inline-block",
-		marginRight: "5px",
+		marginRight: "2px",
 		color: "green",
 		verticalAlign: "middle",
 		fontSize: ".8rem"
 	},
 	statusNot: {
 		display: "inline-block",
-		marginRight: "5px",
+		marginRight: "2px",
 		color: "red",
 		fontSize: ".8rem"
 	},
 	iconSaved: {
 		display: "inline-block",
-		color: "green"
+		color: "green",
+		verticalAlign: "text-bottom"
 	},
 	iconNot: {
 		display: "inline-block",
@@ -115,7 +123,10 @@ const style = {
 		borderBottom: "1px solid rgba(0,0,0,.08)",
 		borderLeft: "1px solid rgba(0,0,0,.08)",
 		borderRight: "1px solid rgba(0,0,0,.08)",
-		backgroundColor: "#f9f9f9"
+		backgroundColor: "#f9f9f9",
+		top: "30px",
+		padding: "3px 0",
+		position: "sticky"
 	},
 	noteControlsHide: {
 		display: "none"
@@ -128,6 +139,13 @@ class Note extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {writing: false, title: "Loading...", content: "Loading...", nav: props.nav, note: props.note, saved: true}
+	}
+	componentWillMount() {
+		if (this.props.note._id !== this.props.location.pathname.replace("/n/", "")) {
+    		this.getNote(this.props.location.pathname.replace("/n/", ""))
+    	}else if (Object.keys(this.props.note).length !== 0) {
+    	  this.setState({title: this.props.note.title, content: this.props.note.content})
+    	}
 		store.subscribe(() => {
 			this.setState({
 				title: store.getState().note.title,
@@ -137,15 +155,6 @@ class Note extends React.Component {
 				saved: true
 			})
 		})
-		this.titleChange = this.titleChange.bind(this)
-		this.bodyChange = this.bodyChange.bind(this)
-	}
-	componentWillMount() {
-		if (this.props.note._id !== this.props.location.pathname.replace("/n/", "")) {
-    		this.getNote(this.props.location.pathname.replace("/n/", ""))
-    	}else if (Object.keys(this.props.note).length !== 0) {
-    	  this.setState({title: this.props.note.title, content: this.props.note.content})
-    	}
 	}
 	getNote(path) {
 		let user = ""
@@ -153,7 +162,9 @@ class Note extends React.Component {
     	  user = this.props.user.userId
     	} else if (cookie.load('user')) {
     	  user = cookie.load('user').userId
-    	} 
+    	} else {
+    		return
+    	}
 		axios.get("/api/getnote", {
 			params: {
 				nid: path,
@@ -161,10 +172,6 @@ class Note extends React.Component {
 			}
 		})
 		.then((res) => {
-			this.setState({
-				title: res.data.title,
-				content: res.data.content
-			})
 			store.dispatch(saveNote(res.data))
 		})
 		.catch((err) => {
@@ -392,13 +399,13 @@ class Note extends React.Component {
 							</div>
 						</div>
 					</div>	
-					<input style={style.title} onChange={this.titleChange} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} value={this.state.title} />
+					<input style={style.title} onChange={this.titleChange.bind(this)} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} value={this.state.title} />
 					<div style={this.props.editor ? style.noteControls : style.noteControlsHide}>
 						<ControlButton onClick={this.insertTodoAtCursor.bind(this)} icon="check_box" text="Todo" />
 						<ControlButton onClick={this.insertListAtCursor.bind(this)} icon="list" text="List" />
 						<ControlButton onClick={this.insertCodeAtCursor.bind(this)} icon="code" text="Code" />
 					</div>
-					<ContentEditable id="body" onChange={this.bodyChange} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} html={this.state.content} style={style.textArea} />
+					<ContentEditable id="body" onChange={this.bodyChange.bind(this)} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} html={this.state.content} style={style.textArea} />
 				</div>
 			</div>
 		)

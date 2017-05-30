@@ -89,3 +89,10 @@ export const searchNotes = (data) => {
     data
   }
 }
+
+export const searchArchivedNotes = (data) => {
+  return {
+    type: 'SEARCH_ARCHIVED_NOTES',
+    data
+  }
+}

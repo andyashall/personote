@@ -35,6 +35,7 @@ const style = {
 		width: "100%",
 		fontSize: "2rem",
 		padding: "8px 0",
+		marginTop: "2px",
 		outline: "none"
 	},
 	textArea: {
@@ -49,10 +50,25 @@ const style = {
 		outline: "none"
 	},
 	controls: {
+		display: "flex",
+		top: 0,
+		padding: "3px 0",
+		position: "sticky",
+		backgroundColor: "#fff",
+		whiteSpace: "nowrap"
+	},
+	contLeft: {
+		width: "50%",
+		color: "#777",
+		marginLeft: "-5px"
+	},
+	contRight: {
+		width: "50%",
 		textAlign: "right"
 	},
-	save: {
-		marginBottom: "1rem"
+	statusCont: {
+		padding: "3px 0",
+		display: "inline-block"
 	},
 	statusSaved: {
 		display: "inline-block",
@@ -199,8 +215,13 @@ class Create extends React.Component {
 			<div style={style.note}>
 				<div style={style.inner}>
 					<div style={style.controls}>
-						{status}
-						{icon}
+						<div style={style.contLeft}></div>
+						<div style={style.contRight}>
+							<div style={style.statusCont}>
+								{status}
+								{icon}
+							</div>
+						</div>
 					</div>	
 					<input style={style.title} onChange={this.titleChange.bind(this)} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} placeholder="Title..." />
 					<ContentEditable id="body" onChange={this.bodyChange.bind(this)} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} html={this.state.content} style={style.textArea} />

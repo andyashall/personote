@@ -5,6 +5,7 @@ import note from './note'
 import nav from './nav'
 import search from './search'
 import editor from './editor'
+import archiveSearch from './archiveSearch'
 
 const app = combineReducers({
   user,
@@ -12,6 +13,7 @@ const app = combineReducers({
   note,
   nav,
   search,
+  archiveSearch,
   editor
 })
 

@@ -4,8 +4,10 @@ import cookie from 'react-cookie'
 import axios from 'axios'
 import store from '../../store'
 const state = store.getState()
+import {searchArchivedNotes} from '../../actions'
 
 import Note from '../../components/archiveNote'
+import NoteLoad from '../../components/archiveNoteLoad'
 
 const style = {
 	cont: {
@@ -27,6 +29,16 @@ const style = {
 		color: "#999",
 		fontWeight: "bold",
 		padding: "15px 10px"
+	},
+	search: {
+		border: "none",
+		color: "#3c3c3c",
+		padding: "15px 10px",
+		outline: "none",
+		boxSizing: "border-box",
+		width: "100%",
+		position: "sticky",
+		top: 0
 	}
 }
 
@@ -35,7 +47,7 @@ class Archive extends React.Component {
 		super(props)
 		this.state = {hov: false, notes: {}, fetched: false}
 	}
-	componentDidMount() {
+	componentWillMount() {
 		let user = ""
     	if (Object.keys(this.props.user).length !== 0) {
     	  user = this.props.user.userId
@@ -64,20 +76,26 @@ class Archive extends React.Component {
 	hoverOut(e) {
 		this.setState({hov: false})
 	}
+	search(e) {
+		store.dispatch(searchArchivedNotes(e.target.value.toLowerCase()))
+	}
 	render() {
 		let notes = null
 		if (!this.state.fetched) {
-			notes = <Note title="Loading..." body="Loading..." date={new Date()} />
+			notes = <NoteLoad />
 		}
 		if (this.state.fetched) {
-			notes = <span>{this.state.notes.map(note => {
+			notes = <span>{this.state.notes.filter((note) => {
+				let combined = note.title.concat(note.content).toLowerCase()
+				return combined.indexOf(this.props.archiveSearch) !== -1
+			}).map(note => {
 				return <Note title={note.title} date={note.updated} body={note.preview} id={note._id} key={note._id} />
 			})}</span>
 		}
 		return (
 			<div style={style.cont}>
 				<div style={style.inner}>
-					<div style={style.head}>Archived Notes</div>
+					<input onChange={this.search.bind(this)} style={style.search} placeholder="Search archived notes..." />
 					{notes}
 				</div>
 			</div>
@@ -87,7 +105,8 @@ class Archive extends React.Component {
 
 const mapStateToProps = (state) => {
 	return {
-		user: state.user
+		user: state.user,
+		archiveSearch: state.archiveSearch
 	}
 }
 

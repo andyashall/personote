@@ -1,5 +1,5 @@
 import React from 'react'
-import {Link, browserHistory} from 'react-router'
+import {Link, browserHistory} from 'react-router-dom'
 import axios from 'axios'
 import cookie from 'react-cookie'
 
@@ -25,23 +25,49 @@ const style = {
 		borderRadius: "3px",
 		width: "300px"
 	},
+	title: {
+		textAlign: "center",
+		color: "#999",
+		marginBottom: "2rem"
+	},
 	input: {
-		border: "none",
-		borderBottom: "1px solid #dedede",
-		width: "100%",
-		boxSizing: "border-box",
+		border: "1px solid #f1f1f1",
 		borderRadius: "3px",
-		padding: "5px 8px",
-		marginBottom: "10px"
+		padding: "10px 8px",
+		outline: "none",
+		backgroundColor: "#f1f1f1",
+		boxSizing: "border-box",
+		marginBottom: "10px",
+		width: "300px"
+	},
+	inputFocus: {
+		border: "1px solid #ccc",
+		borderRadius: "3px",
+		padding: "10px 8px",
+		outline: "none",
+		backgroundColor: "#fff",
+		boxSizing: "border-box",
+		marginBottom: "10px",
+		width: "300px"
 	},
 	button: {
 		border: "none",
 		width: "100%",
 		boxSizing: "border-box",
 		borderRadius: "3px",
-		padding: "5px 8px",
-		backgroundColor: "#f1f1f1",
-		color: "#3c3c3c",
+		padding: "10px 8px",
+		backgroundColor: "#3c3c3c",
+		color: "#fff",
+		cursor: "pointer"
+	},
+	buttonHov: {
+		border: "none",
+		width: "100%",
+		boxSizing: "border-box",
+		borderRadius: "3px",
+		padding: "10px 8px",
+		backgroundColor: "#5c5c5c",
+		color: "#fff",
 		cursor: "pointer"
 	},
 	change: {
@@ -82,8 +108,8 @@ class Signin extends React.Component {
 			.then((res) => {
 				store.dispatch(signIn(res.data))
 				cookie.save('user', res.data)
-				browserHistory.push("/")
-				location.reload()
+				let rootUrl = location.protocol + '//' + location.host
+				window.location.assign(rootUrl)
 			})
 			.catch((err) => {
 				
@@ -112,8 +138,8 @@ class Signin extends React.Component {
 				}
 				store.dispatch(signIn(res.data))
 				cookie.save('user', res.data)
-				browserHistory.push("/")
-				location.reload()
+				let rootUrl = location.protocol + '//' + location.host
+				window.location.assign(rootUrl)
 			})
 			.catch((err) => {
 				
@@ -150,19 +176,18 @@ class Signin extends React.Component {
 		if (this.state.signIn) {
 			control = <div onClick={this.changeSU.bind(this)} style={style.change}>or Sign up</div>
 			headerText = "Sign in"
-			button = <button onClick={this.signIn.bind(this)} style={style.button}>Sign in</button>
+			button = <button onMouseEnter={() => {this.setState({buttHov: true})}} onMouseLeave={() => {this.setState({buttHov: false})}} style={this.state.buttHov ? style.buttonHov : style.button} onClick={this.signIn.bind(this)}>Sign in</button>
 		}
 		if (this.state.signUp) {
 			control = <div onClick={this.changeSI.bind(this)} style={style.change}>or Sign in</div>
 			headerText = "Sign up"
-			button = <button onClick={this.signUp.bind(this)} style={style.button}>Sign up</button>
+			button = <button onMouseEnter={() => {this.setState({buttHov: true})}} onMouseLeave={() => {this.setState({buttHov: false})}} style={this.state.buttHov ? style.buttonHov : style.button} onClick={this.signUp.bind(this)}>Sign up</button>
 		}
 		return (
 			<div style={style.cont}>
 				<div style={style.cent}>
-					<h1 style={{textAlign: "center", color: "#999"}}>{headerText}</h1>
-					<input style={style.input} onChange={this.email.bind(this)} placeholder="Email" type="email" id="email" />
-					<input style={style.input} placeholder="Password" type="password" id="password" />
+					<input style={style.input} onChange={this.email.bind(this)} onFocus={() => {this.setState({emailFocus: true})}} onBlur={() => {this.setState({emailFocus: false})}} style={this.state.emailFocus ? style.inputFocus : style.input} placeholder="Email" type="email" id="email" />
+					<input style={style.input} onFocus={() => {this.setState({passFocus: true})}} onBlur={() => {this.setState({passFocus: false})}} style={this.state.passFocus ? style.inputFocus : style.input} placeholder="Password" type="password" id="password" />
 					{button}
 					{control}
 				</div>

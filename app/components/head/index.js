@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {Link, browserHistory} from 'react-router'
+import {Link} from 'react-router-dom'
+import {browserHistory} from 'react-router'
 import cookie from 'react-cookie'
 import axios from 'axios'
 import {showNav, hideNav, signIn, signOut} from '../../actions'
@@ -88,7 +89,7 @@ const style = {
 	},
 	newNoteHov: {
 		backgroundColor: "transparent",
-		color: "#3c3c3c",
+		color: "#777",
 		border: "none",
 		borderRadius: "3px",
 		padding: "8px 15px",
@@ -115,12 +116,6 @@ class Head extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {foo: "bar"}
-		let userCookie = cookie.load('user')
-		if (Object.keys(props.user).length === 0) {
-			if (userCookie) {
-				store.dispatch(signIn(userCookie))
-			}
-		}
 	}
 	toggleNav() {
 		if (this.props.nav) {
@@ -134,8 +129,8 @@ class Head extends React.Component {
 	}
 	signOut() {
 		cookie.remove('user')
-		browserHistory.push("/")
-		location.reload()
+		let rootUrl = location.protocol + '//' + location.host
+		window.location.assign(rootUrl)
 	}
 	render() {
 		let account = undefined,

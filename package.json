@@ -1,11 +1,11 @@
 {
-  "name": "personote",
-  "version": "0.2.0",
+  "name": "notes",
+  "version": "0.3.0",
   "description": "Simple open source notes app",
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andyashall/personote.git"
+    "url": "https://github.com/andyashall/notes.git"
   },
   "keywords": [
     "express",
@@ -21,9 +21,9 @@
   "author": "Andrew Ashall",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/andyashall/personote.git/issues"
+    "url": "https://github.com/andyashall/notes.git/issues"
   },
-  "homepage": "https://github.com/andyashall/personote.git",
+  "homepage": "https://github.com/andyashall/notes.git",
   "scripts": {
     "test": "",
     "start": "node server",
@@ -32,21 +32,22 @@
     "jscs": "jscs ."
   },
   "dependencies": {
-    "axios": "^0.15.3",
+    "axios": "^0.16.1",
     "babel-cli": "^6.4.0",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.16.1",
+    "body-parser": "^1.17.1",
     "compression": "^1.6.2",
     "cookie-parser": "^1.4.3",
-    "express": "^4.13.3",
-    "mongodb": "^2.2.22",
+    "express": "^4.15.2",
+    "mongodb": "^2.2.26",
     "random-id": "0.0.2",
     "react": "15.5.4",
     "react-contenteditable": "^2.0.2",
-    "react-cookie": "1.0.4",
+    "react-cookie": "^1.0.4",
     "react-dom": "15.5.4",
-    "react-redux": "5.0.2",
-    "react-router": "3.0.2",
+    "react-redux": "5.0.4",
+    "react-router": "4.1.1",
+    "react-router-dom": "4.1.1",
     "redux": "^3.6.0",
     "time-ago": "^0.1.0"
   },

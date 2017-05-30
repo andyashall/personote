@@ -6,6 +6,7 @@ import store from '../../store'
 const state = store.getState()
 
 import NavNote from '../../components/navNote'
+import NavNoteLoad from '../../components/navNoteLoad'
 import NavTop from '../../components/navTop'
 import Search from '../../components/search'
 
@@ -31,6 +32,18 @@ const style = {
 	top: {
 		borderBottom: "1px solid rgba(0,0,0,.08)",
 		backgroundColor: "#f9f9f9"
+	},
+	moreNotes: {
+		padding: "30px 10px",
+		textAlign: "center",
+		color: "#999"
+	},
+	moreNotesHov: {
+		padding: "30px 10px",
+		textAlign: "center",
+		color: "#777",
+		backgroundColor: "#fff",
+		cursor: "pointer"
 	}
 }
 
@@ -75,7 +88,8 @@ class Nav extends React.Component {
 		}
 	}
 	render() {
-		let notes = <NavNote id="1" key="1" title="Loading notes..." date={new Date()} body="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
+		let moreNotes = <div></div>
+		let notes = <NavNoteLoad />
 		if (Object.keys(this.props.notes).length >= 1 && this.props.notes !== "Not logged in") {
 			notes = <span>{this.props.notes.sort((a,b) => {return new Date(b.updated) - new Date(a.updated)}).filter((note) => {
 				let combined = note.title.concat(note.content).toLowerCase()
@@ -83,6 +97,9 @@ class Nav extends React.Component {
 			}).map(note => {
 				return <NavNote id={note._id} key={note._id} title={note.title} date={note.updated} body={note.preview} />
 			})}</span>
+		}
+		if (Object.keys(this.props.notes).length >= 10) {
+			moreNotes = <div onMouseEnter={() => {this.setState({moreHov: true})}} onMouseLeave={() => {this.setState({moreHov: false})}} style={this.state.moreHov ? style.moreNotesHov : style.moreNotes}>Click for more notes</div>
 		}
 		return (
 			<div>
@@ -92,6 +109,7 @@ class Nav extends React.Component {
 					<Search />
 				</div>
 				{notes}
+				{moreNotes}
 			</div>
 			</div>
 		)

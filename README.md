@@ -18,4 +18,3 @@ A free and open source private notebook. Store all of your notes on your private
 # Todo
 
 - Mobile styles
-- Settings page
