@@ -10,7 +10,7 @@ import NavNoteLoad from '../../components/navNoteLoad'
 import NavTop from '../../components/navTop'
 import Search from '../../components/search'
 
-import { getNotes, moreNotes, updatePost } from '../../actions'
+import { updateNotes, moreNotes, updatePost } from '../../actions'
 
 const style = {
 	nav: {
@@ -52,7 +52,7 @@ class Nav extends React.Component {
 		super(props)
 		this.state = {doot: "doot"}
 		store.subscribe(() => {
-			this.setState({notes: this.props.notes, moreAvailable: false})
+			this.setState({moreAvailable: false})
 		})
 	}
 	componentDidMount() {
@@ -71,7 +71,7 @@ class Nav extends React.Component {
 			}
 		})
 		.then((res) => {
-			store.dispatch(getNotes(res.data))
+			store.dispatch(updateNotes(res.data))
 			if (Object.keys(res.data).length === 10) {
 				this.setState({moreAvailable: true})
 			}

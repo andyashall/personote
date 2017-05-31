@@ -138,7 +138,7 @@ let timer
 class Note extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {writing: false, title: "Loading...", content: "Loading...", nav: props.nav, note: props.note, saved: true}
+		this.state = {writing: false, title: "Loading...", content: "Loading...", saved: true, nid: this.props.note._id}
 	}
 	componentWillMount() {
 		if (this.props.note._id !== this.props.location.pathname.replace("/n/", "")) {
@@ -147,13 +147,15 @@ class Note extends React.Component {
     	  this.setState({title: this.props.note.title, content: this.props.note.content})
     	}
 		store.subscribe(() => {
-			this.setState({
-				title: store.getState().note.title,
-				content: store.getState().note.content,
-				nid: store.getState().note._id,
-				archived: store.getState().note.archived,
-				saved: true
-			})
+			if (this.refs.mounted) {
+				this.setState({
+					title: store.getState().note.title,
+					content: store.getState().note.content,
+					nid: store.getState().note._id,
+					archived: store.getState().note.archived,
+					saved: true
+				})
+			}
 		})
 	}
 	getNote(path) {
@@ -225,7 +227,7 @@ class Note extends React.Component {
 					preview: prev,
 					_id: this.state.nid
 				}
-				let current = store.getState().notes
+				let current = this.props.notes
 				Object.keys(current).forEach((i) => {
 					if (current[i]._id == newNote._id) {
 						current[i].title = newNote.title
@@ -385,7 +387,7 @@ class Note extends React.Component {
 			archiveButton = <NoteButton icon="archive" text="Archive note" onClick={this.archiveNote.bind(this)} />
 		}
 		return (
-			<div style={style.note}>
+			<div ref="mounted" style={style.note}>
 				<div style={resp.inner}>
 					<div style={style.controls}>
 						<div style={style.contLeft}>
@@ -417,7 +419,8 @@ const mapStateToProps = (state) => {
     nav: state.nav,
     note: state.note,
     user: state.user,
-    editor: state.editor
+    editor: state.editor,
+    notes: state.notes
   }
 }
 

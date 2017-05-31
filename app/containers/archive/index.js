@@ -61,10 +61,12 @@ class Archive extends React.Component {
 		}
 		axios.get('/api/getarchive', data)
 		.then((res) => {
-			this.setState({
-				notes: res.data,
-				fetched: true
-			})
+			if (this.refs.mounted) {
+				this.setState({
+					notes: res.data,
+					fetched: true
+				})
+			}
 		})
 		.catch((err) => {
 			console.log(err)
@@ -93,7 +95,7 @@ class Archive extends React.Component {
 			})}</span>
 		}
 		return (
-			<div style={style.cont}>
+			<div ref="mounted" style={style.cont}>
 				<div style={style.inner}>
 					<input onChange={this.search.bind(this)} style={style.search} placeholder="Search archived notes..." />
 					{notes}
