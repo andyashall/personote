@@ -5,7 +5,7 @@
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andyashall/notes.git"
+    "url": "https://github.com/andyashall/personote.git"
   },
   "keywords": [
     "personote",
@@ -22,9 +22,9 @@
   "author": "Andrew Ashall",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/andyashall/notes.git/issues"
+    "url": "https://github.com/andyashall/personote.git/issues"
   },
-  "homepage": "https://github.com/andyashall/notes.git",
+  "homepage": "https://github.com/andyashall/personote.git",
   "scripts": {
     "test": "",
     "start": "node server",
