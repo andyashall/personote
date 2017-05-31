@@ -1,5 +1,5 @@
 {
-  "name": "notes",
+  "name": "personote",
   "version": "0.3.0",
   "description": "Simple open source notes app",
   "main": "server.js",
@@ -8,6 +8,7 @@
     "url": "https://github.com/andyashall/notes.git"
   },
   "keywords": [
+    "personote",
     "express",
     "es6",
     "babel",
