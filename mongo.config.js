@@ -1,1 +1,1 @@
-module.exports = "ADD YOUR MONGO URL HERE";
+module.exports = 'ADD YOUR MONGO URL HERE';

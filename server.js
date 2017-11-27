@@ -10,7 +10,7 @@ const MongoClient = require('mongodb').MongoClient
   , assert = require('assert')
 const bodyParser = require('body-parser')
 
-const url = isDeveloping ? require("./mongo.config.js") : process.env.MONGO_URL
+const url = isDeveloping ? require('./mongo.config.js') : process.env.MONGO_URL
 
 app.use(bodyParser.json())
 app.use(compression())
