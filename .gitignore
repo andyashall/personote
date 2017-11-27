@@ -1,3 +1,4 @@
 node_modules
 dist
 favicon.png
+.DS_Store
