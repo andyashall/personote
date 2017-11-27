@@ -1,9 +1,4 @@
 import React from 'react'
-import {connect} from 'react-redux'
-import cookie from 'react-cookie'
-import axios from 'axios'
-import store from '../../store'
-const state = store.getState()
 
 const style = {
 	cont: {
@@ -27,13 +22,10 @@ const style = {
 	}
 }
 
-class Home extends React.Component {
+export default class Home extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {hov: false, notes: {}, fetched: false}
-	}
-	componentDidMount() {
-
 	}
 	render() {
 		return (
@@ -43,11 +35,3 @@ class Home extends React.Component {
 		)
 	}
 }
-
-const mapStateToProps = (state) => {
-	return {
-		user: state.user
-	}
-}
-
-module.exports = connect(mapStateToProps)(Home)

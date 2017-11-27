@@ -1,5 +1,8 @@
-# 0.3.1
+# 0.3.2
 - Updated fonts
+- Added anti aliasing to fonts
+- Reduced border thickness
+- Reduced note save timeout from 1000 to 100 ms
 
 # 0.3.1 Release Notes
 - Fixed bug caused by unmounting the note component

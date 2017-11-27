@@ -45,7 +45,7 @@ const style = {
 	},
 	account: {
 		display: "inline-block",
-		marginLeft: "20px",
+		marginLeft: "25px",
 		textTransform: 'uppercase',
 		width: "30px",
 		height: "30px",
@@ -77,24 +77,6 @@ const style = {
 		fontSize: ".8rem",
 		backgroundColor: "#f1f1f1",
 		color: "#3c3c3c"
-	},
-	newNote: {
-		backgroundColor: "transparent",
-		color: "#999",
-		border: "none",
-		borderRadius: "3px",
-		padding: "8px 15px",
-		cursor: "pointer",
-		outline: "none"
-	},
-	newNoteHov: {
-		backgroundColor: "transparent",
-		color: "#777",
-		border: "none",
-		borderRadius: "3px",
-		padding: "8px 15px",
-		cursor: "pointer",
-		backgroundColor: "#f1f1f1"
 	},
 	options: {
 		marginLeft: "20px",
@@ -137,7 +119,7 @@ class Head extends React.Component {
 			buttons = undefined
 		if (Object.keys(this.props.user).length >= 1) {
 			account =	<span>
-							<Link to="/new"><button onMouseEnter={() => {this.setState({newNoteHov: true})}} onMouseLeave={() => {this.setState({newNoteHov: false})}} style={this.state.newNoteHov ? style.newNoteHov : style.newNote}>New note +</button></Link>
+							<HeadButton link="/new" text="New note +" />
 							<div onClick={() => {let val = false; if (this.state.showOptions) {val = false} else {val = true} this.setState({showOptions: val})}} style={style.account}>{this.getFirstChar(this.props.user.email)}</div>
 							<div onClick={this.signOut.bind(this)} style={this.state.showOptions ? style.options : style.optionsHide}>Sign out</div>
 						</span>

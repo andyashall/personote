@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import cookie from 'react-cookie'
 import store from './store'
 const state = store.getState()
-import {showNav, hideNav, signIn, signOut} from './actions'
+import {hideNav, signIn} from './actions'
 
 import Head from './components/head'
 import Nav from './containers/nav'

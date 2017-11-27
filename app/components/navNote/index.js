@@ -13,7 +13,7 @@ const style = {
 		boxSizing: "border-box",
 		cursor: "pointer",
 		backgroundColor: "#f9f9f9",
-		borderBottom: "1px solid rgba(0,0,0,.08)",
+		borderBottom: ".5px solid rgba(0,0,0,.08)",
 		padding: "15px 10px"
 	},
 	hov: {
@@ -21,7 +21,7 @@ const style = {
 		boxSizing: "border-box",
 		cursor: "pointer",
 		backgroundColor: "#fff",
-		borderBottom: "1px solid rgba(0,0,0,.08)",
+		borderBottom: ".5px solid rgba(0,0,0,.08)",
 		padding: "15px 10px"
 	},
 	title: {
@@ -47,20 +47,11 @@ const style = {
 	}
 }
 
-const matches = (e, i) => {
-	return e == i
-}
-
 class NavNote extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {hov: false}
 	}
-	// componentDidMount() {
-	// 	if (this.props.id === location.pathname.replace("/n/","")) {
-	// 		this.setState({active: true})
-	// 	}
-	// }
 	hoverIn(e) {
 		this.setState({hov: true})
 	}

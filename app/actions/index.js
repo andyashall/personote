@@ -36,25 +36,6 @@ export const updateNotes = (data) => {
   }
 }
 
-export const moreNotes = (prevData, data) => {
-  let allData = {
-    prev: prevData,
-    new: data
-  }
-  return {
-    type: 'MORE_NOTES',
-    allData
-  }
-}
-
-export const updateNote = (current, data) => {
-  return {
-    type: 'UPDATE_NOTE',
-    current: current,
-    data: data
-  }
-}
-
 export const addNote = (current, data) => {
   return {
     type: 'ADD_NOTE',

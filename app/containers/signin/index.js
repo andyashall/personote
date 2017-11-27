@@ -79,7 +79,7 @@ const style = {
 	}
 }
 
-class Signin extends React.Component {
+export default class Signin extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {hov: false, signIn: true, signUp: false, }
@@ -195,5 +195,3 @@ class Signin extends React.Component {
 		)
 	}
 }
-
-module.exports = Signin

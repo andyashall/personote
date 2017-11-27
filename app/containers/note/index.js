@@ -1,6 +1,5 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router-dom'
 import axios from 'axios'
 import ContentEditable from 'react-contenteditable'
 import cookie from 'react-cookie'
@@ -48,7 +47,7 @@ const style = {
 	},
 	title : {
 		border: "none",
-		borderBottom: "1px solid rgba(0,0,0,.08)",
+		borderBottom: ".5px solid rgba(0,0,0,.08)",
 		boxSizing: "border-box",
 		width: "100%",
 		fontSize: "2rem",
@@ -158,6 +157,13 @@ class Note extends React.Component {
 			}
 		})
 	}
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.location.pathname !== this.props.location.pathname) {
+			let _id = nextProps.location.pathname.replace("/n/", "")
+			let note = this.props.notes.find((e) => {return e._id == _id})
+			store.dispatch(saveNote(note))
+		}
+	}
 	getNote(path) {
 		let user = ""
     	if (Object.keys(this.props.user).length !== 0) {
@@ -189,7 +195,6 @@ class Note extends React.Component {
 	}
 	keyUp() {
 		if (!this.state.writing) {
-				console.log("change")
 				this.setState({writing: true})
 		}
 		clearTimeout(timer)
@@ -197,9 +202,8 @@ class Note extends React.Component {
 			if (!this.state.saved && this.state.writing) {
 				this.setState({writing: false})
 				this.save()
-				console.log("saving...")
 			}
-		}, 1000)
+		}, 100)
 	}
 	keyDown() {
 		clearTimeout(timer)
@@ -213,7 +217,7 @@ class Note extends React.Component {
 				preview: prev,
 				content: this.state.content,
 				nid: this.state.nid,
-				userId: store.getState().user.userId
+				userId: this.props.user.userId
 			}
 			axios.post("/api/savenote", data)
 			.then((res) => {
@@ -227,6 +231,7 @@ class Note extends React.Component {
 					preview: prev,
 					_id: this.state.nid
 				}
+				store.dispatch(saveNote(newNote))
 				let current = this.props.notes
 				Object.keys(current).forEach((i) => {
 					if (current[i]._id == newNote._id) {
@@ -249,7 +254,7 @@ class Note extends React.Component {
     	  user = this.props.user.userIdupdateNotes
     	} else if (cookie.load('user')) {
     	  user = cookie.load('user').userId
-    	} 
+    	}
 		axios.get("/api/getnotes", {
 			params: {
 				uid: user
@@ -274,6 +279,7 @@ class Note extends React.Component {
 						lim = Object.keys(current).length
 					Object.keys(current).forEach((i) => {
 						if (current[i]._id === this.props.note._id) {
+							current[i].archived = true
 							current.splice(i,1)
 							store.dispatch(updateNotes(current))
 						}
@@ -292,6 +298,7 @@ class Note extends React.Component {
 		axios.post('/api/unarchivenote', data)
 		.then((res) => {
 			if (res.status === 200) {
+				this.props.note.archived = false
 				store.dispatch(addNote(store.getState().notes, this.props.note))
 			}
 		})
@@ -314,7 +321,7 @@ class Note extends React.Component {
 						if (current[i]._id === this.props.note._id) {
 							current.splice(i,1)
 							store.dispatch(updateNotes(current))
-							browserHistory.push("/")
+							window.location.assign(location.protocol + '//' + location.host)
 						}
 					})	
 				}
@@ -325,9 +332,6 @@ class Note extends React.Component {
 		} else {
 			return
 		}
-	}
-	doot(e) {
-		console.log("doot")
 	}
 	insertTodoAtCursor() { 
 	   let sel = window.getSelection()

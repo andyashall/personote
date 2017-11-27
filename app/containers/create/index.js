@@ -17,8 +17,7 @@ const style = {
 	noteNav: {
 		marginTop: "50px",
 		minHeight: "calc(100vh - 50px)",
-		backgroundColor: "#fff",
-		// marginLeft: "300px"
+		backgroundColor: "#fff"
 	},
 	inner: {
 		width: "700px",
@@ -103,9 +102,6 @@ class Create extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {writing: false, title: "", content: "", nav: props.nav, created: false, saved: false, nid: ""}
-	}
-	componentWillMount() {
-
 	}
 	titleChange(e) {
 		this.setState({title: e.target.value, saved: false})
@@ -225,7 +221,6 @@ class Create extends React.Component {
 					</div>	
 					<input style={style.title} onChange={this.titleChange.bind(this)} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} placeholder="Title..." />
 					<ContentEditable id="body" onChange={this.bodyChange.bind(this)} onKeyUp={this.keyUp.bind(this)} onKeyDown={this.keyDown.bind(this)} html={this.state.content} style={style.textArea} />
-				{/*	<TinyMCE onChange={this.bodyChange.bind(this)} config={{plugins: "autoresize autolink link image lists textcolor colorpicker", toolbar: "", themes: "modern", skin: ''}} /> */}
 				</div>
 			</div>
 		)
