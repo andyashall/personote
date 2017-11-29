@@ -203,7 +203,7 @@ class Note extends React.Component {
 				this.setState({writing: false})
 				this.save()
 			}
-		}, 100)
+		}, 500)
 	}
 	keyDown() {
 		clearTimeout(timer)

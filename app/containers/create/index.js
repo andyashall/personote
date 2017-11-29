@@ -29,7 +29,7 @@ const style = {
 	},
 	title : {
 		border: "none",
-		borderBottom: "1px solid rgba(0,0,0,.08)",
+		borderBottom: ".5px solid rgba(0,0,0,.08)",
 		boxSizing: "border-box",
 		width: "100%",
 		fontSize: "2rem",
@@ -121,7 +121,7 @@ class Create extends React.Component {
 				this.save()
 				console.log("saving...")
 			}
-		}, 1000)
+		}, 500)
 	}
 	keyDown() {
 		clearTimeout(timer)
